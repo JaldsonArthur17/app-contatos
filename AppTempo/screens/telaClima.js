@@ -48,13 +48,11 @@ export default function TelaClima() {
 
     return (
         <View style={styles.container}>
-            {/* Header */}
             <View style={styles.header}>
                 <Text style={styles.cidade}>📍 {clima?.city ?? '--'}  ▾</Text>
                 <Text style={styles.sino}>🔔</Text>
             </View>
 
-            {/* Ícone + Temperatura */}
             <View style={styles.blocoTemperatura}>
                 <Text style={styles.iconeClima}>🌧️</Text>
                 <Text style={styles.temperatura}>{clima?.temp ?? '--'}°</Text>
@@ -64,7 +62,6 @@ export default function TelaClima() {
                 </Text>
             </View>
 
-            {/* Faixa de estatísticas */}
             <View style={styles.faixaStats}>
                 <View style={styles.statItem}>
                     <Text style={styles.statIcone}>☂️</Text>
@@ -80,7 +77,6 @@ export default function TelaClima() {
                 </View>
             </View>
 
-            {/* Card - Today */}
             <View style={styles.card}>
                 <View style={styles.cardHeader}>
                     <Text style={styles.cardTitulo}>Today</Text>
@@ -96,7 +92,6 @@ export default function TelaClima() {
                 </View>
             </View>
 
-            {/* Card - Next Forecast */}
             <View style={styles.card}>
                 <View style={styles.cardHeader}>
                     <Text style={styles.cardTitulo}>Next Forecast</Text>
