@@ -1,6 +1,6 @@
 
-import EditarContatoScreen from './screens/EditarContatosScreen';
+import ExcluirContatoScreen from './screens/ExcluirContatoScreen';
 
 export default function App() {
-  return <EditarContatoScreen />;
+  return <ExcluirContatoScreen />;
 }
