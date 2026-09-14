@@ -1,21 +1,27 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { useEffect } from 'react';
+import { Text, View } from 'react-native';
 
+import api from './services/api';
 
 export default function App() {
+
+  useEffect(() => {
+    consultarContatos();
+  }, []);
+
+  async function consultarContatos() {
+    try {
+      const response = await api.get('/contatos');
+
+      console.log(response.data);
+    } catch (error) {
+      console.log('Erro ao consultar contatos:', error);
+    }
+  }
+
   return (
-    <View style={styles.container}>
-      <Text>Firebase conectado!</Text>
-      <StatusBar style="auto" />
+    <View>
+      <Text>Testando API de contatos</Text>
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
