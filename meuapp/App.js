@@ -1,9 +1,10 @@
-import { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { FlatList, Text, View } from 'react-native';
 
 import api from './services/api';
 
 export default function App() {
+  const [contatos, setContatos] = useState([]);
 
   useEffect(() => {
     consultarContatos();
@@ -13,7 +14,7 @@ export default function App() {
     try {
       const response = await api.get('/contatos');
 
-      console.log(response.data);
+      setContatos(response.data);
     } catch (error) {
       console.log('Erro ao consultar contatos:', error);
     }
@@ -21,7 +22,20 @@ export default function App() {
 
   return (
     <View>
-      <Text>Testando API de contatos</Text>
+      <Text>Meus Contatos</Text>
+
+      <FlatList
+        data={contatos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <View>
+            <Text>{item.nome}</Text>
+            <Text>{item.telefone}</Text>
+            <Text>{item.cidade}</Text>
+            <Text>{item.anotacao}</Text>
+          </View>
+        )}
+      />
     </View>
   );
 }
