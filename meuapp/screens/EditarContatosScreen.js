@@ -1,54 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import {
-    Button,
-    Text,
-    TextInput,
-    View,
+  Button,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 
 import api from '../services/api';
 
-export default function EditarContatoScreen() {
-  const [id, setId] = useState('');
+export default function EditarContatosScreen({ route, navigation }) {
+  const { contato } = route.params;
 
-  const [nome, setNome] = useState('');
-  const [telefone, setTelefone] = useState('');
-  const [cidade, setCidade] = useState('');
-  const [anotacao, setAnotacao] = useState('');
+  const [nome, setNome] = useState(contato.nome);
+  const [telefone, setTelefone] = useState(contato.telefone);
+  const [cidade, setCidade] = useState(contato.cidade);
+  const [anotacao, setAnotacao] = useState(contato.anotacao);
 
   const [mensagem, setMensagem] = useState('');
 
-  useEffect(() => {
-    carregarContato();
-  }, []);
-
-  async function carregarContato() {
-    try {
-      const response = await api.get('/contatos');
-
-      const contato = response.data[0];
-
-      if (!contato) {
-        setMensagem('Nenhum contato encontrado.');
-        return;
-      }
-
-      setId(contato.id);
-      setNome(contato.nome);
-      setTelefone(contato.telefone);
-      setCidade(contato.cidade);
-      setAnotacao(contato.anotacao);
-    } catch (error) {
-      console.log('Erro ao carregar contato:', error);
-
-      setMensagem('Erro ao carregar contato.');
-    }
-  }
-
   async function alterarContato() {
     try {
-      const response = await api.put(`/contatos/${id}`, {
+      const response = await api.put(`/contatos/${contato.id}`, {
         nome: nome,
         telefone: telefone,
         cidade: cidade,
@@ -99,6 +72,11 @@ export default function EditarContatoScreen() {
       />
 
       <Text>{mensagem}</Text>
+
+      <Button
+        title="Voltar"
+        onPress={() => navigation.goBack()}
+      />
     </View>
   );
 }

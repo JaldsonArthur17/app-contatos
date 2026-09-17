@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import {
   FlatList,
@@ -7,16 +7,14 @@ import {
   View,
 } from 'react-native';
 
+import { useFocusEffect } from '@react-navigation/native';
+
 import api from '../services/api';
 
 export default function ContatosScreen({ navigation }) {
   const [contatos, setContatos] = useState([]);
 
-  useEffect(() => {
-    carregarContatos();
-  }, []);
-
-  async function carregarContatos() {
+  const carregarContatos = useCallback(async () => {
     try {
       const response = await api.get('/contatos');
 
@@ -24,7 +22,13 @@ export default function ContatosScreen({ navigation }) {
     } catch (error) {
       console.log('Erro ao consultar contatos:', error);
     }
-  }
+  }, []);
+
+  useFocusEffect(
+    useCallback(() => {
+      carregarContatos();
+    }, [carregarContatos])
+  );
 
   return (
     <View>
@@ -41,9 +45,12 @@ export default function ContatosScreen({ navigation }) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => 
-              navigation.navigate('DetalhesContato', { contato: item, })
-            }>
+            onPress={() =>
+              navigation.navigate('DetalhesContato', {
+                contato: item,
+              })
+            }
+          >
             <View>
               <Text>{item.nome}</Text>
               <Text>{item.telefone}</Text>

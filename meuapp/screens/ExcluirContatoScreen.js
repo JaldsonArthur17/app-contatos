@@ -1,45 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { Button, Text, View } from 'react-native';
+import {
+  Button,
+  Text,
+  View,
+} from 'react-native';
 
 import api from '../services/api';
 
-export default function ExcluirContatoScreen() {
-  const [id, setId] = useState('');
-  const [nome, setNome] = useState('');
+export default function ExcluirContatoScreen({ route, navigation }) {
+  const { contato } = route.params;
+
   const [mensagem, setMensagem] = useState('');
-
-  useEffect(() => {
-    carregarContato();
-  }, []);
-
-  async function carregarContato() {
-    try {
-      const response = await api.get('/contatos');
-
-      const contato = response.data[0];
-
-      if (!contato) {
-        setMensagem('Nenhum contato encontrado.');
-        return;
-      }
-
-      setId(contato.id);
-      setNome(contato.nome);
-    } catch (error) {
-      console.log('Erro ao carregar contato:', error);
-
-      setMensagem('Erro ao carregar contato.');
-    }
-  }
 
   async function excluirContato() {
     try {
-      await api.delete(`/contatos/${id}`);
+      await api.delete(`/contatos/${contato.id}`);
 
       setMensagem('Contato excluído com sucesso!');
-      setNome('');
-      setId('');
     } catch (error) {
       console.log('Erro ao excluir contato:', error);
 
@@ -52,8 +30,10 @@ export default function ExcluirContatoScreen() {
       <Text>Excluir Contato</Text>
 
       <Text>
-        {nome ? `Contato: ${nome}` : 'Nenhum contato selecionado'}
+        Deseja excluir o contato:
       </Text>
+
+      <Text>{contato.nome}</Text>
 
       <Button
         title="Excluir contato"
@@ -61,6 +41,11 @@ export default function ExcluirContatoScreen() {
       />
 
       <Text>{mensagem}</Text>
+
+      <Button
+        title="Voltar"
+        onPress={() => navigation.goBack()}
+      />
     </View>
   );
 }
