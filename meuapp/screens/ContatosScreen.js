@@ -1,9 +1,15 @@
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
 
-import { buscarContatos } from '../services/api';
+import {
+  FlatList,
+  Pressable,
+  Text,
+  View,
+} from 'react-native';
 
-export default function ContatosScreen() {
+import api from '../services/api';
+
+export default function ContatosScreen({ navigation }) {
   const [contatos, setContatos] = useState([]);
 
   useEffect(() => {
@@ -12,13 +18,11 @@ export default function ContatosScreen() {
 
   async function carregarContatos() {
     try {
-      const dados = await buscarContatos();
+      const response = await api.get('/contatos');
 
-      console.log(dados);
-
-      setContatos(dados);
+      setContatos(response.data);
     } catch (error) {
-      console.log(error);
+      console.log('Erro ao consultar contatos:', error);
     }
   }
 
@@ -26,11 +30,27 @@ export default function ContatosScreen() {
     <View>
       <Text>Meus Contatos</Text>
 
-      {contatos.map((contato) => (
-        <Text key={contato.id}>
-          {contato.nome}
-        </Text>
-      ))}
+      <Pressable
+        onPress={() => navigation.navigate('CadastroContato')}
+      >
+        <Text>+ Novo contato</Text>
+      </Pressable>
+
+      <FlatList
+        data={contatos}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Pressable
+            onPress={() => console.log('Contato selecionado:', item)}
+          >
+            <View>
+              <Text>{item.nome}</Text>
+              <Text>{item.telefone}</Text>
+              <Text>{item.cidade}</Text>
+            </View>
+          </Pressable>
+        )}
+      />
     </View>
   );
 }

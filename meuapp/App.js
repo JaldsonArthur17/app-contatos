@@ -1,6 +1,11 @@
+import { NavigationContainer } from '@react-navigation/native';
 
-import ExcluirContatoScreen from './screens/ExcluirContatoScreen';
+import AppNavigator from './navigation/AppNavigator';
 
 export default function App() {
-  return <ExcluirContatoScreen />;
+  return (
+    <NavigationContainer>
+      <AppNavigator />
+    </NavigationContainer>
+  );
 }
