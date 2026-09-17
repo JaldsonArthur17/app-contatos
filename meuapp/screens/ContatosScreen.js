@@ -41,8 +41,9 @@ export default function ContatosScreen({ navigation }) {
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Pressable
-            onPress={() => console.log('Contato selecionado:', item)}
-          >
+            onPress={() => 
+              navigation.navigate('DetalhesContato', { contato: item, })
+            }>
             <View>
               <Text>{item.nome}</Text>
               <Text>{item.telefone}</Text>
