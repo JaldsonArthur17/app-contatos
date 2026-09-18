@@ -1,8 +1,8 @@
 import {
-    createUserWithEmailAndPassword,
-    getAuth,
-    signInWithEmailAndPassword,
-    signOut,
+  createUserWithEmailAndPassword,
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
 } from 'firebase/auth';
 
 import app from '../firebaseConfig';
@@ -28,3 +28,5 @@ export async function fazerLogin(email, senha) {
 export async function fazerLogout() {
   return await signOut(auth);
 }
+
+export { auth };
