@@ -1,11 +1,13 @@
 import { useCallback, useState } from 'react';
 
 import {
+  Button,
   FlatList,
   Pressable,
   Text,
   View,
 } from 'react-native';
+
 
 import { useFocusEffect } from '@react-navigation/native';
 
@@ -39,6 +41,10 @@ export default function ContatosScreen({ navigation }) {
       >
         <Text>+ Novo contato</Text>
       </Pressable>
+      <Button
+  title="Perfil"
+  onPress={() => navigation.navigate('Perfil')}
+/>
 
       <FlatList
         data={contatos}

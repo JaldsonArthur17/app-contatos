@@ -6,6 +6,7 @@ import DetalhesContatoScreen from '../screens/DetalhesContatoScreen';
 import EditarContatosScreen from '../screens/EditarContatosScreen';
 import ExcluirContatoScreen from '../screens/ExcluirContatoScreen';
 import LoginScreen from '../screens/LoginScreen';
+import PerfilScreen from '../screens/PerfilScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -19,7 +20,6 @@ export default function AppNavigator() {
           title: 'Meus Contatos',
         }}
       />
-
       <Stack.Screen
         name="CadastroContato"
         component={CadastroContatoScreen}
@@ -27,7 +27,6 @@ export default function AppNavigator() {
           title: 'Cadastrar Contato',
         }}
       />
-
       <Stack.Screen
         name="DetalhesContato"
         component={DetalhesContatoScreen}
@@ -35,7 +34,6 @@ export default function AppNavigator() {
           title: 'Detalhes do Contato',
         }}
       />
-
       <Stack.Screen
         name="EditarContato"
         component={EditarContatosScreen}
@@ -43,7 +41,6 @@ export default function AppNavigator() {
           title: 'Editar Contato',
         }}
       />
-
       <Stack.Screen
         name="ExcluirContato"
         component={ExcluirContatoScreen}
@@ -58,6 +55,13 @@ export default function AppNavigator() {
           title: 'Login',
         }}
     />
+      <Stack.Screen
+        name="Perfil"
+        component={PerfilScreen}
+        options={{
+          title: 'Perfil',
+  }}
+/>
     </Stack.Navigator>
   );
 }
