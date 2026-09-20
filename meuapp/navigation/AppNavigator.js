@@ -1,10 +1,10 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 
-import CadastroContatoScreen from '../screens/CadastroContatoScreen';
 import ContatosScreen from '../screens/ContatosScreen';
 import DetalhesContatoScreen from '../screens/DetalhesContatoScreen';
 import EditarContatosScreen from '../screens/EditarContatosScreen';
 import ExcluirContatoScreen from '../screens/ExcluirContatoScreen';
+import NovoContatoScreen from '../screens/NovoContatoScreen';
 import PerfilScreen from '../screens/PerfilScreen';
 
 const Stack = createNativeStackNavigator();
@@ -16,15 +16,15 @@ export default function AppNavigator() {
         name="Contatos"
         component={ContatosScreen}
         options={{
-          title: 'Meus Contatos',
+          headerShown: false,
         }}
       />
 
       <Stack.Screen
-        name="CadastroContato"
-        component={CadastroContatoScreen}
+        name="NovoContato"
+        component={NovoContatoScreen}
         options={{
-          title: 'Cadastrar Contato',
+          title: 'Novo Contato',
         }}
       />
 
