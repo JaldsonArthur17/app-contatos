@@ -16,22 +16,26 @@ export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [senha, setSenha] = useState('');
   const [mensagem, setMensagem] = useState('');
+  const [carregando, setCarregando] = useState(false);
 
   async function entrar() {
-    try {
-      const response = await fazerLogin(email, senha);
+  try {
+    setCarregando(true);
+    setMensagem('');
 
-      console.log('Usuário logado:', response.user);
+    const response = await fazerLogin(email, senha);
 
-      setMensagem('Login realizado com sucesso!');
+    console.log('Usuário logado:', response.user);
 
-      navigation.navigate('Contatos');
-    } catch (error) {
-      console.log('Erro ao fazer login:', error);
+    setMensagem('Login realizado com sucesso!');
+  } catch (error) {
+    console.log('Erro ao fazer login:', error);
 
-      setMensagem('E-mail ou senha inválidos.');
-    }
+    setMensagem('E-mail ou senha inválidos.');
+  } finally {
+    setCarregando(false);
   }
+}
 
   return (
     <KeyboardAvoidingView
@@ -82,11 +86,15 @@ export default function LoginScreen({ navigation }) {
         )}
 
         <Pressable
-          style={styles.botao}
+          style={[
+            styles.botao,
+            carregando && styles.botaoDesativado,
+          ]}
           onPress={entrar}
+          disabled={carregando}
         >
           <Text style={styles.textoBotao}>
-            Entrar
+            {carregando ? 'Entrando...' : 'Entrar'}
           </Text>
         </Pressable>
 
@@ -156,6 +164,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginTop: 8,
   },
+
+  botaoDesativado: {
+    opacity: 0.6,
+},
 
   textoBotao: {
     fontSize: 16,

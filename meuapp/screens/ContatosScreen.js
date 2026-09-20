@@ -13,6 +13,7 @@ import {
 import { useFocusEffect } from '@react-navigation/native';
 
 import api from '../services/api';
+import { auth } from '../services/auth';
 
 export default function ContatosScreen({ navigation }) {
   const [contatos, setContatos] = useState([]);
@@ -25,7 +26,16 @@ export default function ContatosScreen({ navigation }) {
     setErro(false);
 
     try {
-      const response = await api.get('/contatos');
+      const usuario = auth.currentUser;
+
+      if (!usuario) {
+        setContatos([]);
+        return;
+      }
+
+      const response = await api.get(
+        `/contatos?uid=${usuario.uid}`
+      );
 
       setContatos(response.data);
     } catch (error) {
@@ -48,9 +58,15 @@ export default function ContatosScreen({ navigation }) {
     const textoBusca = busca.toLowerCase();
 
     return (
-      contato.nome?.toLowerCase().includes(textoBusca) ||
-      contato.telefone?.toLowerCase().includes(textoBusca) ||
-      contato.cidade?.toLowerCase().includes(textoBusca)
+      String(contato.nome ?? '')
+        .toLowerCase()
+        .includes(textoBusca) ||
+      String(contato.telefone ?? '')
+        .toLowerCase()
+        .includes(textoBusca) ||
+      String(contato.cidade ?? '')
+        .toLowerCase()
+        .includes(textoBusca)
     );
   });
 
@@ -62,11 +78,14 @@ export default function ContatosScreen({ navigation }) {
     const partes = nome.trim().split(' ');
 
     if (partes.length === 1) {
-      return partes[0].substring(0, 2).toUpperCase();
+      return partes[0]
+        .substring(0, 2)
+        .toUpperCase();
     }
 
     return (
-      partes[0][0] + partes[partes.length - 1][0]
+      partes[0][0] +
+      partes[partes.length - 1][0]
     ).toUpperCase();
   }
 
@@ -112,6 +131,7 @@ export default function ContatosScreen({ navigation }) {
       return (
         <View style={styles.estado}>
           <ActivityIndicator size="large" />
+
           <Text style={styles.estadoTexto}>
             Carregando contatos...
           </Text>
@@ -146,7 +166,7 @@ export default function ContatosScreen({ navigation }) {
       );
     }
 
-    if (contatosFiltrados.length === 0) {
+    if (contatos.length === 0) {
       return (
         <View style={styles.estado}>
           <Text style={styles.iconeVazio}>
@@ -171,6 +191,24 @@ export default function ContatosScreen({ navigation }) {
               Adicionar contato
             </Text>
           </Pressable>
+        </View>
+      );
+    }
+
+    if (contatosFiltrados.length === 0) {
+      return (
+        <View style={styles.estado}>
+          <Text style={styles.iconeVazio}>
+            🔍
+          </Text>
+
+          <Text style={styles.estadoTitulo}>
+            Nenhum contato encontrado
+          </Text>
+
+          <Text style={styles.estadoTexto}>
+            Tente buscar por outro nome, telefone ou cidade.
+          </Text>
         </View>
       );
     }

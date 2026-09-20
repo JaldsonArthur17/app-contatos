@@ -1,26 +1,27 @@
 import { useState } from 'react';
 
 import {
-    Pressable,
-    StyleSheet,
-    Text,
-    TextInput,
-    View,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
 } from 'react-native';
 
 import api from '../services/api';
+import { auth } from '../services/auth';
 
 export default function NovoContatoScreen({ navigation }) {
   const [nome, setNome] = useState('');
   const [telefone, setTelefone] = useState('');
   const [cidade, setCidade] = useState('');
   const [anotacao, setAnotacao] = useState('');
-
   const [mensagem, setMensagem] = useState('');
 
   async function cadastrarContato() {
     try {
       const response = await api.post('/contatos', {
+        uid: auth.currentUser.uid,
         nome: nome,
         telefone: telefone,
         cidade: cidade,
