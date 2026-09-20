@@ -1,18 +1,14 @@
-import { useEffect, useState } from 'react';
-
-import {
-  ActivityIndicator,
-  View,
-} from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
 
 import { onAuthStateChanged } from 'firebase/auth';
 
-import { NavigationContainer } from '@react-navigation/native';
-
-import { auth } from './services/auth';
+import { useEffect, useState } from 'react';
 
 import AppNavigator from './navigation/AppNavigator';
 import AuthNavigator from './navigation/AuthNavigator';
+import SplashScreen from './screens/SplashScreen';
+
+import { auth } from './services/auth';
 
 export default function App() {
   const [usuario, setUsuario] = useState(null);
@@ -31,11 +27,7 @@ export default function App() {
   }, []);
 
   if (carregando) {
-    return (
-      <View>
-        <ActivityIndicator size="large" />
-      </View>
-    );
+    return <SplashScreen />;
   }
 
   return (
