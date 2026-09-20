@@ -9,6 +9,7 @@ import {
 } from 'react-native';
 
 import api from '../services/api';
+import { auth } from '../services/auth';
 
 export default function ExcluirContatoScreen({ route, navigation }) {
   const { contato } = route.params;
@@ -18,6 +19,24 @@ export default function ExcluirContatoScreen({ route, navigation }) {
 
   async function excluirContato() {
     try {
+      const usuario = auth.currentUser;
+
+      if (!usuario) {
+        setModalVisivel(false);
+        setMensagem('Usuário não autenticado.');
+        return;
+      }
+
+      const response = await api.get(
+        `/contatos?id=${contato.id}&uid=${usuario.uid}`
+      );
+
+      if (response.data.length === 0) {
+        setModalVisivel(false);
+        setMensagem('Contato não encontrado.');
+        return;
+      }
+
       await api.delete(`/contatos/${contato.id}`);
 
       setModalVisivel(false);

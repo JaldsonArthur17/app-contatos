@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 
 import api from '../services/api';
+import { auth } from '../services/auth';
 
 export default function EditarContatosScreen({ route, navigation }) {
   const { contato } = route.params;
@@ -20,23 +21,34 @@ export default function EditarContatosScreen({ route, navigation }) {
   const [mensagem, setMensagem] = useState('');
 
   async function alterarContato() {
-    try {
-      const response = await api.put(`/contatos/${contato.id}`, {
-        nome: nome,
-        telefone: telefone,
-        cidade: cidade,
-        anotacao: anotacao,
-      });
+  try {
+    const usuario = auth.currentUser;
 
-      console.log('Contato alterado:', response.data);
-
-      setMensagem('Contato alterado com sucesso!');
-    } catch (error) {
-      console.log('Erro ao alterar contato:', error);
-
-      setMensagem('Erro ao alterar contato.');
+    if (!usuario) {
+      setMensagem('Usuário não autenticado.');
+      return;
     }
+
+    const response = await api.put(`/contatos/${contato.id}`, {
+      uid: usuario.uid,
+      nome: nome,
+      telefone: telefone,
+      cidade: cidade,
+      anotacao: anotacao,
+    });
+
+    console.log('Contato alterado:', response.data);
+    navigation.goBack();
+
+    navigation.replace('DetalhesContato', {
+      contato: response.data,
+    });
+  } catch (error) {
+    console.log('Erro ao alterar contato:', error);
+
+    setMensagem('Erro ao alterar contato.');
   }
+}
 
   return (
     <View>
