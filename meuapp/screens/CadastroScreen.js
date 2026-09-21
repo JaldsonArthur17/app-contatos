@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 
-import { cadastrarUsuario } from '../services/auth';
+import { cadastrarUsuario, mensagemErroFirebase } from '../services/auth';
 
 export default function CadastroScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -16,24 +16,57 @@ export default function CadastroScreen({ navigation }) {
   const [mensagem, setMensagem] = useState('');
   const [carregando, setCarregando] = useState(false);
 
-  async function cadastrar() {
-    try {
-      setCarregando(true);
-      setMensagem('');
-
-      const response = await cadastrarUsuario(email, senha);
-
-      console.log('Usuário cadastrado:', response.user);
-
-      setMensagem('Usuário cadastrado com sucesso!');
-    } catch (error) {
-      console.log('Erro ao cadastrar usuário:', error);
-
-      setMensagem('Erro ao cadastrar usuário.');
-    } finally {
-      setCarregando(false);
-    }
+  function validarFormulario() {
+  if (!email.trim()) {
+    return 'Informe seu e-mail.';
   }
+
+  const emailValido =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+  if (!emailValido) {
+    return 'Digite um e-mail válido.';
+  }
+
+  if (!senha) {
+    return 'Informe sua senha.';
+  }
+
+  if (senha.length < 6) {
+    return 'A senha deve ter pelo menos 6 caracteres.';
+  }
+
+  return '';
+}
+
+  async function cadastrar() {
+  const erroValidacao = validarFormulario();
+
+  if (erroValidacao) {
+    setMensagem(erroValidacao);
+    return;
+  }
+
+  try {
+    setCarregando(true);
+    setMensagem('');
+
+    const response = await cadastrarUsuario(
+      email.trim(),
+      senha
+    );
+
+    console.log('Usuário cadastrado:', response.user);
+
+    setMensagem('Usuário cadastrado com sucesso!');
+  } catch (error) {
+    console.log('Erro ao cadastrar usuário:', error);
+
+    setMensagem(mensagemErroFirebase(error));
+  } finally {
+    setCarregando(false);
+  }
+}
 
   return (
     <View style={styles.container}>

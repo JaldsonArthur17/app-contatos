@@ -16,16 +16,58 @@ export default function NovoContatoScreen({ navigation }) {
   const [telefone, setTelefone] = useState('');
   const [cidade, setCidade] = useState('');
   const [anotacao, setAnotacao] = useState('');
+
   const [mensagem, setMensagem] = useState('');
+  const [erro, setErro] = useState('');
+
+  function validarFormulario() {
+    if (!nome.trim()) {
+      return 'Informe o nome do contato.';
+    }
+
+    if (!telefone.trim()) {
+      return 'Informe o telefone do contato.';
+    }
+
+    const telefoneNumeros = telefone.replace(/\D/g, '');
+
+    if (telefoneNumeros.length < 10) {
+      return 'Informe um telefone válido.';
+    }
+
+    if (!cidade.trim()) {
+      return 'Informe a cidade do contato.';
+    }
+
+    return '';
+  }
 
   async function cadastrarContato() {
+    const erroValidacao = validarFormulario();
+
+    if (erroValidacao) {
+      setErro(erroValidacao);
+      setMensagem('');
+      return;
+    }
+
     try {
+      setErro('');
+      setMensagem('');
+
+      const usuario = auth.currentUser;
+
+      if (!usuario) {
+        setErro('Usuário não autenticado.');
+        return;
+      }
+
       const response = await api.post('/contatos', {
-        uid: auth.currentUser.uid,
-        nome: nome,
-        telefone: telefone,
-        cidade: cidade,
-        anotacao: anotacao,
+        uid: usuario.uid,
+        nome: nome.trim(),
+        telefone: telefone.trim(),
+        cidade: cidade.trim(),
+        anotacao: anotacao.trim(),
       });
 
       console.log('Contato cadastrado:', response.data);
@@ -39,7 +81,8 @@ export default function NovoContatoScreen({ navigation }) {
     } catch (error) {
       console.log('Erro ao cadastrar contato:', error);
 
-      setMensagem('Erro ao cadastrar contato.');
+      setErro('Não foi possível cadastrar o contato.');
+      setMensagem('');
     }
   }
 
@@ -48,7 +91,9 @@ export default function NovoContatoScreen({ navigation }) {
       <View style={styles.conteudo}>
         <View style={styles.avatarContainer}>
           <View style={styles.avatar}>
-            <Text style={styles.avatarIcone}>👤</Text>
+            <Text style={styles.avatarIcone}>
+              👤
+            </Text>
           </View>
 
           <Text style={styles.textoFoto}>
@@ -56,7 +101,9 @@ export default function NovoContatoScreen({ navigation }) {
           </Text>
         </View>
 
-        <Text style={styles.label}>Nome *</Text>
+        <Text style={styles.label}>
+          Nome *
+        </Text>
 
         <TextInput
           style={styles.input}
@@ -65,7 +112,9 @@ export default function NovoContatoScreen({ navigation }) {
           onChangeText={setNome}
         />
 
-        <Text style={styles.label}>Telefone *</Text>
+        <Text style={styles.label}>
+          Telefone *
+        </Text>
 
         <TextInput
           style={styles.input}
@@ -75,7 +124,9 @@ export default function NovoContatoScreen({ navigation }) {
           keyboardType="phone-pad"
         />
 
-        <Text style={styles.label}>Cidade *</Text>
+        <Text style={styles.label}>
+          Cidade *
+        </Text>
 
         <TextInput
           style={styles.input}
@@ -84,7 +135,9 @@ export default function NovoContatoScreen({ navigation }) {
           onChangeText={setCidade}
         />
 
-        <Text style={styles.label}>Anotação</Text>
+        <Text style={styles.label}>
+          Anotação
+        </Text>
 
         <TextInput
           style={[styles.input, styles.inputAnotacao]}
@@ -93,6 +146,12 @@ export default function NovoContatoScreen({ navigation }) {
           onChangeText={setAnotacao}
           multiline
         />
+
+        {erro !== '' && (
+          <Text style={styles.erro}>
+            {erro}
+          </Text>
+        )}
 
         {mensagem !== '' && (
           <Text style={styles.mensagem}>
@@ -171,7 +230,15 @@ const styles = StyleSheet.create({
     textAlignVertical: 'top',
   },
 
+  erro: {
+    color: '#E53935',
+    textAlign: 'center',
+    marginBottom: 12,
+    fontSize: 14,
+  },
+
   mensagem: {
+    color: '#2E7D32',
     textAlign: 'center',
     marginBottom: 12,
     fontSize: 14,

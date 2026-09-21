@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native';
 
-import { fazerLogin } from '../services/auth';
+import { fazerLogin, mensagemErroFirebase } from '../services/auth';
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -18,12 +18,41 @@ export default function LoginScreen({ navigation }) {
   const [mensagem, setMensagem] = useState('');
   const [carregando, setCarregando] = useState(false);
 
+  function validarFormulario() {
+  if (!email.trim()) {
+    return 'Informe seu e-mail.';
+  }
+
+  const emailValido =
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+
+  if (!emailValido) {
+    return 'Digite um e-mail válido.';
+  }
+
+  if (!senha) {
+    return 'Informe sua senha.';
+  }
+
+  return '';
+}
+
   async function entrar() {
+  const erroValidacao = validarFormulario();
+
+  if (erroValidacao) {
+    setMensagem(erroValidacao);
+    return;
+  }
+
   try {
     setCarregando(true);
     setMensagem('');
 
-    const response = await fazerLogin(email, senha);
+    const response = await fazerLogin(
+      email.trim(),
+      senha
+    );
 
     console.log('Usuário logado:', response.user);
 
@@ -31,7 +60,7 @@ export default function LoginScreen({ navigation }) {
   } catch (error) {
     console.log('Erro ao fazer login:', error);
 
-    setMensagem('E-mail ou senha inválidos.');
+    setMensagem(mensagemErroFirebase(error));
   } finally {
     setCarregando(false);
   }
