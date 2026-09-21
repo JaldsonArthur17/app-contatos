@@ -19,6 +19,7 @@ export default function NovoContatoScreen({ navigation }) {
 
   const [mensagem, setMensagem] = useState('');
   const [erro, setErro] = useState('');
+  const [carregando, setCarregando] = useState(false);
 
   function validarFormulario() {
     if (!nome.trim()) {
@@ -52,6 +53,7 @@ export default function NovoContatoScreen({ navigation }) {
     }
 
     try {
+      setCarregando(true);
       setErro('');
       setMensagem('');
 
@@ -83,6 +85,8 @@ export default function NovoContatoScreen({ navigation }) {
 
       setErro('Não foi possível cadastrar o contato.');
       setMensagem('');
+    } finally {
+      setCarregando(false);
     }
   }
 
@@ -110,6 +114,7 @@ export default function NovoContatoScreen({ navigation }) {
           placeholder="Nome"
           value={nome}
           onChangeText={setNome}
+          editable={!carregando}
         />
 
         <Text style={styles.label}>
@@ -122,6 +127,7 @@ export default function NovoContatoScreen({ navigation }) {
           value={telefone}
           onChangeText={setTelefone}
           keyboardType="phone-pad"
+          editable={!carregando}
         />
 
         <Text style={styles.label}>
@@ -133,6 +139,7 @@ export default function NovoContatoScreen({ navigation }) {
           placeholder="Cidade"
           value={cidade}
           onChangeText={setCidade}
+          editable={!carregando}
         />
 
         <Text style={styles.label}>
@@ -145,6 +152,7 @@ export default function NovoContatoScreen({ navigation }) {
           value={anotacao}
           onChangeText={setAnotacao}
           multiline
+          editable={!carregando}
         />
 
         {erro !== '' && (
@@ -160,11 +168,25 @@ export default function NovoContatoScreen({ navigation }) {
         )}
 
         <Pressable
-          style={styles.botaoSalvar}
+          style={[
+            styles.botaoSalvar,
+            carregando && styles.botaoDesativado,
+          ]}
           onPress={cadastrarContato}
+          disabled={carregando}
         >
           <Text style={styles.textoBotao}>
-            Salvar
+            {carregando ? 'Salvando...' : 'Salvar'}
+          </Text>
+        </Pressable>
+
+        <Pressable
+          style={styles.botaoCancelar}
+          onPress={() => navigation.goBack()}
+          disabled={carregando}
+        >
+          <Text style={styles.textoCancelar}>
+            Cancelar
           </Text>
         </Pressable>
       </View>
@@ -253,9 +275,28 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
 
+  botaoDesativado: {
+    opacity: 0.6,
+  },
+
   textoBotao: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '700',
+  },
+
+  botaoCancelar: {
+    height: 48,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#D9DEE7',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 12,
+  },
+
+  textoCancelar: {
+    fontSize: 15,
+    fontWeight: '600',
   },
 });
